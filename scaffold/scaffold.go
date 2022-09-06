@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	GoScaffoldPath = "src/github.com/catchplay/scaffold"
+	GoScaffoldPath = "/home/derhabicht/.config/scaffold"
 )
 
 func init() {
@@ -38,7 +38,7 @@ func (s *scaffold) Generate(path string) error {
 		return err
 	}
 	projectName := filepath.Base(genAbsDir)
-	//TODO: have to check path MUST be under the $GOPATH/src folder
+
 	goProjectPath := strings.TrimPrefix(genAbsDir, filepath.Join(Gopath, "src")+string(os.PathSeparator))
 
 	d := data{
@@ -78,7 +78,7 @@ type templateSet struct {
 
 func getTemplateSets() []templateSet {
 	tt := templateEngine{}
-	templatesFolder := filepath.Join(Gopath, GoScaffoldPath, "template/")
+	templatesFolder := filepath.Join(GoScaffoldPath, "template/")
 	//fmt.Printf("walk:%s\n", templatesFolder)
 	filepath.Walk(templatesFolder, tt.visit)
 	return tt.Templates
@@ -134,7 +134,7 @@ func (templEngine *templateEngine) visit(path string, f os.FileInfo, err error) 
 		templateFileName := filepath.Base(path)
 
 		genFileBaeName := strings.TrimSuffix(templateFileName, ".tmpl") + ".go"
-		genFileBasePath, err := filepath.Rel(filepath.Join(Gopath, GoScaffoldPath, "template"), filepath.Join(filepath.Dir(path), genFileBaeName))
+		genFileBasePath, err := filepath.Rel(filepath.Join(GoScaffoldPath, "template"), filepath.Join(filepath.Dir(path), genFileBaeName))
 		if err != nil {
 			return pkgErr.WithStack(err)
 		}
@@ -150,7 +150,7 @@ func (templEngine *templateEngine) visit(path string, f os.FileInfo, err error) 
 	} else if mode := f.Mode(); mode.IsRegular() {
 		templateFileName := filepath.Base(path)
 
-		basepath := filepath.Join(Gopath, GoScaffoldPath, "template")
+		basepath := filepath.Join(GoScaffoldPath, "template")
 		targpath := filepath.Join(filepath.Dir(path), templateFileName)
 		genFileBasePath, err := filepath.Rel(basepath, targpath)
 		if err != nil {
@@ -178,7 +178,7 @@ func (s *scaffold) genFormStaticFle(d data) error {
 			}
 			defer src.Close()
 
-			basepath := filepath.Join(Gopath, GoScaffoldPath, "static")
+			basepath := filepath.Join(GoScaffoldPath, "static")
 			distRelFilePath, err := filepath.Rel(basepath, path)
 			if err != nil {
 				return pkgErr.WithStack(err)
@@ -206,7 +206,7 @@ func (s *scaffold) genFormStaticFle(d data) error {
 		return nil
 	}
 
-	walkPath := filepath.Join(Gopath, GoScaffoldPath, "static")
+	walkPath := filepath.Join(GoScaffoldPath, "static")
 	return filepath.Walk(walkPath, walkerFuc)
 }
 
